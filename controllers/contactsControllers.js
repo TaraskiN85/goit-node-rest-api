@@ -38,7 +38,7 @@ export const createContact = async (req, res, next) => {
   try {
     const { name, email, phone } = req.body;
     const result = await contactsService.addContact(name, email, phone);
-    res.json(result);
+    res.status(201).json(result);
   } catch (error) {
     next(error);
   }
