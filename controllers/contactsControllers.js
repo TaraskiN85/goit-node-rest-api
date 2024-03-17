@@ -26,7 +26,7 @@ export const getOneContact = async (req, res, next) => {
 export const deleteContact = async (req, res, next) => {
   try {
     const contactId = req.params.id;
-    const result = await contactsService.removeContact(contactId);
+    const result = await contactsService.removeById(contactId);
     if (!result) throw HttpError(404);
     res.json(result);
   } catch (error) {
@@ -36,8 +36,7 @@ export const deleteContact = async (req, res, next) => {
 
 export const createContact = async (req, res, next) => {
   try {
-    const { name, email, phone } = req.body;
-    const result = await contactsService.addContact(name, email, phone);
+    const result = await contactsService.addContact(req.body);
     res.status(201).json(result);
   } catch (error) {
     next(error);
@@ -51,7 +50,19 @@ export const updateContact = async (req, res, next) => {
     if (!Object.keys(data).length) {
       throw HttpError(400, 'Body must have at least one field');
     }
-    const result = await contactsService.updateContact(id, data);
+    const result = await contactsService.updateById(id, data);
+    if (!result) throw HttpError(404);
+    res.json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateStatusContact = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const favorite = req.body.favorite;
+    const result = await contactsService.updateById(id, { favorite });
     if (!result) throw HttpError(404);
     res.json(result);
   } catch (error) {
